@@ -20,7 +20,13 @@ function M.compile()
     end,
   }, function(choice)
     if choice then
-      vim.cmd("!arduino-cli compile --fqbn " .. choice.fqbn .. " --output-dir ~/Arcom %:p")
+              -- Get the name of the sketch file
+      local sketch_name = vim.fn.expand("%:t:r")
+      -- Create a folder in ~/Arcom for this sketch
+      local output_dir = "~/Arcom/" .. sketch_name
+      os.execute("mkdir -p " .. output_dir)
+      -- Compile and output to the new directory
+      vim.cmd("!arduino-cli compile --fqbn " .. choice.fqbn .. " --output-dir" .. output_dir .. "%:p")
     end
   end)
 end
