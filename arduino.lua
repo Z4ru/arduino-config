@@ -20,7 +20,7 @@ function M.compile()
     end,
   }, function(choice)
     if choice then
-      vim.cmd("!arduino-cli compile --fqbn " .. choice.fqbn .. " %:p")
+      vim.cmd("!arduino-cli compile --fqbn " .. choice.fqbn .. " --output-dir ~/Arcom %:p")
     end
   end)
 end
