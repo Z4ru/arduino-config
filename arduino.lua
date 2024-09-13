@@ -23,8 +23,13 @@ function M.compile()
       -- Create a folder in ~/Arcom for this sketch and specific board
       local output_dir = os.getenv("HOME") .. "/Arcom/" .. sketch_name .. "/" .. choice.name
       os.execute("mkdir -p " .. output_dir)
-      -- Compile and output to the new directory
-      vim.cmd("!arduino-cli compile --fqbn " .. choice.fqbn .. " --output-dir " .. output_dir .. " %:p")
+
+      -- Compile and output to the new directory using vim.fn.system()
+      local compile_cmd = "arduino-cli compile --fqbn " .. choice.fqbn .. " --output-dir " .. output_dir .. " " .. vim.fn.expand("%:p")
+      local result = vim.fn.system(compile_cmd)
+
+      -- Print the result to check if any error occurred
+      print(result)
     end
   end)
 end
@@ -42,14 +47,18 @@ function M.upload()
       if choice.fqbn == "arduino:avr:yun" then
         vim.ui.input({ prompt = "Enter IP Address (e.g., 192.168.x.x): " }, function(ip)
           if ip then
-            vim.cmd("!arduino-cli upload --fqbn " .. choice.fqbn .. " --port " .. ip .. " %:p")
+            local upload_cmd = "arduino-cli upload --fqbn " .. choice.fqbn .. " --port " .. ip .. " " .. vim.fn.expand("%:p")
+            local result = vim.fn.system(upload_cmd)
+            print(result)
           end
         end)
       else
         -- Upload for other boards via USB port
         vim.ui.input({ prompt = "Enter Port (e.g., /dev/ttyUSB0): " }, function(port)
           if port then
-            vim.cmd("!arduino-cli upload --fqbn " .. choice.fqbn .. " --port " .. port .. " %:p")
+            local upload_cmd = "arduino-cli upload --fqbn " .. choice.fqbn .. " --port " .. port .. " " .. vim.fn.expand("%:p")
+            local result = vim.fn.system(upload_cmd)
+            print(result)
           end
         end)
       end
