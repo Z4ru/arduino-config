@@ -1,3 +1,5 @@
+-- ~/.config/nvim/lua/arduino.lua
+
 local M = {}
 
 -- List of supported boards
@@ -20,15 +22,22 @@ function M.compile()
       -- Get the name of the sketch file
       local sketch_name = vim.fn.expand("%:t:r")
       -- Create a folder in ~/Arcom for this sketch
-      local output_dir = vim.fn.expand("~/Arcom/" .. sketch_name .. "/" .. choice.name)
+      local output_dir = vim.fn.expand("~") .. "/Arcom/" .. sketch_name .. "/" .. choice.name
       os.execute("mkdir -p '" .. output_dir .. "'")
       
       -- Get the full path of the current sketch
       local sketch_path = vim.fn.expand("%:p")
       
-      -- Ensure the sketch path and output path are wrapped in quotes
-      local cmd = "arduino-cli compile --fqbn " .. choice.fqbn .. " --build-path '" .. output_dir .. "' '" .. sketch_path .. "'"
-      vim.cmd("!" .. cmd)
+      -- Use table for arguments to avoid argument misinterpretation
+      local cmd = {
+        "arduino-cli",
+        "compile",
+        "--fqbn", choice.fqbn,
+        "--build-path", "'" .. output_dir .. "'",
+        "'" .. sketch_path .. "'"
+      }
+      -- Execute the command as a single concatenated string
+      vim.cmd("!" .. table.concat(cmd, " "))
     end
   end)
 end
@@ -49,16 +58,28 @@ function M.upload()
       if choice.fqbn == "arduino:avr:yun" then
         vim.ui.input({ prompt = "Enter IP Address (e.g., 192.168.x.x): " }, function(ip)
           if ip then
-            local cmd = "arduino-cli upload --fqbn " .. choice.fqbn .. " --port " .. ip .. " '" .. sketch_path .. "'"
-            vim.cmd("!" .. cmd)
+            local cmd = {
+              "arduino-cli",
+              "upload",
+              "--fqbn", choice.fqbn,
+              "--port", ip,
+              "'" .. sketch_path .. "'"
+            }
+            vim.cmd("!" .. table.concat(cmd, " "))
           end
         end)
       else
         -- Upload for other boards via USB port
         vim.ui.input({ prompt = "Enter Port (e.g., /dev/ttyUSB0): " }, function(port)
           if port then
-            local cmd = "arduino-cli upload --fqbn " .. choice.fqbn .. " --port " .. port .. " '" .. sketch_path .. "'"
-            vim.cmd("!" .. cmd)
+            local cmd = {
+              "arduino-cli",
+              "upload",
+              "--fqbn", choice.fqbn,
+              "--port", port,
+              "'" .. sketch_path .. "'"
+            }
+            vim.cmd("!" .. table.concat(cmd, " "))
           end
         end)
       end
