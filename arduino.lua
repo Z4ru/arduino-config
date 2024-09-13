@@ -1,5 +1,3 @@
--- ~/.config/nvim/lua/arduino.lua
-
 local M = {}
 
 -- List of supported boards
@@ -22,8 +20,8 @@ function M.compile()
     if choice then
       -- Get the name of the sketch file
       local sketch_name = vim.fn.expand("%:t:r")
-      -- Create a folder in ~/Arcom for this sketch
-      local output_dir = "~/Arcom/" .. sketch_name
+      -- Create a folder in ~/Arcom for this sketch and specific board
+      local output_dir = "~/Arcom/" .. sketch_name .. "/" .. choice.name
       os.execute("mkdir -p " .. output_dir)
       -- Compile and output to the new directory
       vim.cmd("!arduino-cli compile --fqbn " .. choice.fqbn .. " --output-dir " .. output_dir .. " %:p")
